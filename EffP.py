@@ -18,10 +18,10 @@ def succ_prob_css_calc(B_orig, logicals_in, s_nodes, loss_inds):
     ## output:
     ## succ_fail [type: binary value]: 0 (failure), 1(success)
     ######################################################
+    N = np.size(logicals_in,1)
     B = B_orig.copy()
     logicals = list(np.copy(logicals_in))
     s_nodes_set = set(np.copy(s_nodes))
-    N = np.shape(logicals_in)[1]
 
     Ns_remain = len(s_nodes_set) # number of stabilizer generators
     q_remain = list(set(B.nodes())-s_nodes_set) # number of qubits (anciall+data)
@@ -31,26 +31,7 @@ def succ_prob_css_calc(B_orig, logicals_in, s_nodes, loss_inds):
 
     for i_q, q in enumerate(loss_inds):
         ## correct logical operators
-        # if Ns_remain> 0:
-        #     logicals = correct_logical(q,logicals, Sx_mat)
-        # logicals = correct_logical(logicals, Sx_mat, q+Nq)
-        if len(logicals) == 1:
-            if logicals[0][q]>0:
-                if Ns_remain> 0:
-                    st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
-                    if len(st_ind)>0:
-                        logicals[0] = (logicals[0]+Sx_mat[st_ind[0],:]) % 2
-                else:
-                    logicals.pop()
-        else:
-            for i_log in np.arange(len(logicals)-1,-1,-1):
-                if logicals[i_log][q]>0:
-                    if Ns_remain> 0:
-                        st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
-                        if len(st_ind)>0:
-                            logicals[i_log] = (logicals[i_log]+Sx_mat[st_ind[0],:]) % 2
-                    else:
-                        logicals.pop(i_log)            
+        logicals = correct_logical(q,logicals, Sx_mat)
         ## update stabilizer group
         ## first: update graph
         if q in B:
@@ -67,29 +48,6 @@ def succ_prob_css_calc(B_orig, logicals_in, s_nodes, loss_inds):
             else:
                 Sx_mat = []
                 # break
-        
-        # logicals = correct_logical(logicals, Sx_mat, q+Nq)
-        # q2 = q+Nq
-        # if q2 in B:
-        #     B, s_nodes_set = modify_graph(q2,B,s_nodes_set)
-        # ## second: update stabilizer group matrix
-        #     Ns_remain = len(s_nodes_set)
-        #     if Ns_remain> 0:
-        #         q_remain = list(set(B.nodes())-s_nodes_set)
-        #         node_list = list(s_nodes_set) + q_remain
-        #         adj_mat_new = nx.to_numpy_matrix(B, nodelist = node_list)
-        #         Sx_red = adj_mat_new[:Ns_remain,Ns_remain:]
-        #         Sx_mat = np.zeros((Ns_remain,N))
-        #         Sx_mat[:,q_remain] = Sx_red
-        #     else:
-        #         Sx_mat = []
-        #         break
-
-    succ_fail = 0 # default value: failure
-    # if Ns_remain > 0:
-    #     return int(len(logicals)/2)
-    # elif i_q == len(loss_inds)-1:
-    #     return int(len(logicals)/2)
     num_qs = 0
     if len(logicals)>=1:
         for i_l in range(len(logicals)):
@@ -126,20 +84,51 @@ def modify_graph(q,B,s_nodes_set):
 
 def correct_logical(q,logicals_in, Sx_mat):
     logicals = list(np.copy(logicals_in))
+    Ns_remain = np.size(Sx_mat,0)
     if len(logicals) == 1:
-        if logicals[0][q]>0:            
-            st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
-            if len(st_ind)>0:
-                logicals[0] = (logicals[0]+Sx_mat[st_ind[0],:]) % 2
-            else:
-                logicals.pop()
-
-    else:
-        for i_log in np.arange(len(logicals)-1,-1,-1):
-            if logicals[i_log][q]>0:            
+        if logicals[0][q]>0:
+            if Ns_remain> 0:
                 st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
                 if len(st_ind)>0:
-                    logicals[i_log] = (logicals[i_log]+Sx_mat[st_ind[0],:]) % 2
+                    logicals[0] = (logicals[0]+Sx_mat[st_ind[0],:]) % 2
                 else:
-                    logicals.pop(i_log)
+                    logicals.pop()
+            else:
+                logicals.pop()
+    else:
+        for i_log in np.arange(len(logicals)-1,-1,-1):
+            if logicals[i_log][q]>0:
+                if Ns_remain> 0:
+                    st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
+                    if len(st_ind)>0:
+                        logicals[i_log] = (logicals[i_log]+Sx_mat[st_ind[0],:]) % 2
+                    else:
+                        logicals.pop(i_log)            
+                else:
+                    logicals.pop(i_log) 
     return logicals
+
+def foliated_graph(S_mat,s_nodes, Nl,bdy=True):
+    # bdy = True: OBC and False: PBC
+    Nq_l = np.size(S_mat,1) # number of data qubits per layer
+    Ns_l = np.size(S_mat,0) # number of stabilizers per layer
+    N = Nl*(Nq_l+Ns_l) # number of data qubits
+    
+    B_orig = nx.Graph()
+    B_orig.add_nodes_from(np.arange(N))
+    B_orig.add_nodes_from(s_nodes)
+    for row in range(Ns_l):
+        qs = np.argwhere(S_mat[row,:]>0)[:,0]
+        for i_l in range(Nl):
+            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+row), i_l*(Nq_l+Ns_l)+q) for q in qs])
+
+    if bdy:
+        for i_l in range(1,Nl):
+            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), i_l*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
+            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), (i_l-1)*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
+    else:
+        for i_l in range(Nl):
+            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), i_l*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
+            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), ((i_l-1)%Nl)*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
+        
+    return B_orig
