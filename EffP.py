@@ -123,9 +123,10 @@ def foliated_graph(S_mat,s_nodes, Nl,bdy=True):
             B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+row), i_l*(Nq_l+Ns_l)+q) for q in qs])
 
     if bdy:
-        for i_l in range(1,Nl):
+        for i_l in range(Nl):
             B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), i_l*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
-            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), (i_l-1)*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
+            if i_l> 0:
+                B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), (i_l-1)*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
     else:
         for i_l in range(Nl):
             B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), i_l*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
