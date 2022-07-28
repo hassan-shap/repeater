@@ -7,7 +7,7 @@ import time
 
 repeat = 24
 Nrep = 1000 # number of iterations
-Nl_list = np.arange(2,4)
+Nl_list = np.arange(10,41,5)
 p_list = np.linspace(0.01,0.4,20)
 
 from joblib import Parallel, delayed
