@@ -108,7 +108,6 @@ def correct_logical(q,logicals_in, Sx_mat):
                     logicals.pop(i_log) 
     return logicals
 
-
 def succ_prob_css_q_resolved(B_orig, logicals_in, s_nodes, loss_inds):
     ######################################################
     ## inputs:
@@ -139,8 +138,10 @@ def succ_prob_css_q_resolved(B_orig, logicals_in, s_nodes, loss_inds):
         # print(logic_remained)
         # print(np.shape(logicals))
         # print(logicals[logic_remained])
-        logic_removed = correct_logical_q_resolved(q,logicals[logic_remained,:], Sx_mat)
+        logic_removed,logic_modified, logic_op = correct_logical_q_resolved(q,logicals[logic_remained,:], Sx_mat)
         logic_list[logic_remained[logic_removed]] = 0
+        if len(logic_modified)>0:
+            logicals[logic_remained[logic_modified],:] = np.array(logic_op)
         ## update stabilizer group
         ## first: update graph
         if q in B:
@@ -162,6 +163,7 @@ def succ_prob_css_q_resolved(B_orig, logicals_in, s_nodes, loss_inds):
 
 def correct_logical_q_resolved(q,logicals_in, Sx_mat):
     logicals = list(np.copy(logicals_in))
+    N_logicals = len(logicals)
     logic_removed = []
     Ns_remain = np.size(Sx_mat,0)
     if len(logicals) == 1:
@@ -171,10 +173,10 @@ def correct_logical_q_resolved(q,logicals_in, Sx_mat):
                 if len(st_ind)>0:
                     logicals[0] = (logicals[0]+Sx_mat[st_ind[0],:]) % 2
                 else:
-                    # logicals.pop()
+                    logicals.pop()
                     logic_removed.append(0)
             else:
-                # logicals.pop()
+                logicals.pop()
                 logic_removed.append(0)
 
     else:
@@ -185,12 +187,14 @@ def correct_logical_q_resolved(q,logicals_in, Sx_mat):
                     if len(st_ind)>0:
                         logicals[i_log] = (logicals[i_log]+Sx_mat[st_ind[0],:]) % 2
                     else:
-                        # logicals.pop(i_log)
+                        logicals.pop(i_log)
                         logic_removed.append(i_log)
                 else:
-                    # logicals.pop(i_log) 
+                    logicals.pop(i_log) 
                     logic_removed.append(i_log)
-    return logic_removed
+                    
+    logic_modified = list(set(range(N_logicals))-set(logic_removed))
+    return logic_removed,logic_modified, logicals
 
 
 def foliated_graph(S_mat,s_nodes, Nl,bdy=True):
