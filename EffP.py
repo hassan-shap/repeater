@@ -108,6 +108,91 @@ def correct_logical(q,logicals_in, Sx_mat):
                     logicals.pop(i_log) 
     return logicals
 
+
+def succ_prob_css_q_resolved(B_orig, logicals_in, s_nodes, loss_inds):
+    ######################################################
+    ## inputs:
+    ## B_orig [type: networkx]: stabilizer graph, two kinds of nodes: qubit 1...N and stabilizer s1...s_{Ns}
+    ## logicals_in [type: list of numpy arrays]: logical operators in every row, columns act on qubits
+    ## s_nodes [type: list]: list of stabilizer nodes s1...s_{Ns}
+    ## loss_inds [type: numpy array]: index of erased qubits
+    #####################
+    ## output:
+    ## succ_fail [type: binary value]: 0 (failure), 1(success)
+    ######################################################
+    N = np.size(logicals_in,1)
+    B = B_orig.copy()
+    logicals = np.copy(logicals_in)
+    s_nodes_set = set(np.copy(s_nodes))
+
+    Ns_remain = len(s_nodes_set) # number of stabilizer generators
+    q_remain = list(set(B.nodes())-s_nodes_set) # number of qubits (anciall+data)
+    node_list = list(s_nodes_set) + q_remain  # indices of all nodes in graph
+    adj_mat_new = nx.to_numpy_array(B, nodelist = node_list) # adjaceny matrix of stabilizer graph
+    Sx_mat = adj_mat_new[:Ns_remain,Ns_remain:] # stabilizer group matrix
+
+    N_logic = np.size(logicals_in,0)
+    logic_list = np.ones(N_logic)
+    for i_q, q in enumerate(loss_inds):
+        ## correct logical operators
+        logic_remained = np.argwhere(logic_list==1)[:,0]
+        # print(logic_remained)
+        # print(np.shape(logicals))
+        # print(logicals[logic_remained])
+        logic_removed = correct_logical_q_resolved(q,logicals[logic_remained,:], Sx_mat)
+        logic_list[logic_remained[logic_removed]] = 0
+        ## update stabilizer group
+        ## first: update graph
+        if q in B:
+            B, s_nodes_set = modify_graph(q,B,s_nodes_set)
+        ## second: update stabilizer group matrix
+            Ns_remain = len(s_nodes_set)
+            if Ns_remain> 0:
+                q_remain = list(set(B.nodes())-s_nodes_set)
+                node_list = list(s_nodes_set) + q_remain
+                adj_mat_new = nx.to_numpy_matrix(B, nodelist = node_list)
+                Sx_red = adj_mat_new[:Ns_remain,Ns_remain:]
+                Sx_mat = np.zeros((Ns_remain,N))
+                Sx_mat[:,q_remain] = Sx_red
+            else:
+                Sx_mat = []
+                # break
+    
+    return logic_list
+
+def correct_logical_q_resolved(q,logicals_in, Sx_mat):
+    logicals = list(np.copy(logicals_in))
+    logic_removed = []
+    Ns_remain = np.size(Sx_mat,0)
+    if len(logicals) == 1:
+        if logicals[0][q]>0:
+            if Ns_remain> 0:
+                st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
+                if len(st_ind)>0:
+                    logicals[0] = (logicals[0]+Sx_mat[st_ind[0],:]) % 2
+                else:
+                    # logicals.pop()
+                    logic_removed.append(0)
+            else:
+                # logicals.pop()
+                logic_removed.append(0)
+
+    else:
+        for i_log in np.arange(len(logicals)-1,-1,-1):
+            if logicals[i_log][q]>0:
+                if Ns_remain> 0:
+                    st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
+                    if len(st_ind)>0:
+                        logicals[i_log] = (logicals[i_log]+Sx_mat[st_ind[0],:]) % 2
+                    else:
+                        # logicals.pop(i_log)
+                        logic_removed.append(i_log)
+                else:
+                    # logicals.pop(i_log) 
+                    logic_removed.append(i_log)
+    return logic_removed
+
+
 def foliated_graph(S_mat,s_nodes, Nl,bdy=True):
     # bdy = True: OBC and False: PBC
     Nq_l = np.size(S_mat,1) # number of data qubits per layer
