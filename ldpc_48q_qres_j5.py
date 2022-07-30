@@ -18,7 +18,7 @@ num_cores = 12#multiprocessing.cpu_count()
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 24
 Nrep = 100 # number of iterations
-Nl_list = np.arange(2,4)
+Nl_list = np.arange(2,9)
 # p_list = np.linspace(0.01,0.4,20)
 p_list = np.linspace(0.01,0.4,20)
 
@@ -101,21 +101,25 @@ for i_L, Nl in enumerate(Nl_list):
 
         succ_prob_X = np.zeros((len(p_list),np.size(logical_tX,0)))
         succ_prob_Z = np.zeros((len(p_list),np.size(logical_tX,0)))
-        succ_prob_word = np.zeros(len(p_list))
+        succ_prob_word_X = np.zeros(len(p_list))
+        succ_prob_word_Z = np.zeros(len(p_list))
         for i_p, p in enumerate(p_list):
             for i_r in range(Nrep):
                 loss_inds = np.random.permutation(np.argwhere(np.random.rand(N)<p)[:,0])
                 succ_prob_X_val = succ_prob_css_q_resolved(B_orig_X, logical_in_X, s_nodes, loss_inds)
                 succ_prob_X[i_p,:] += succ_prob_X_val
+                succ_prob_word_X[i_p] += (np.sum(succ_prob_X_val)==N_logic)
                 succ_prob_Z_val = succ_prob_css_q_resolved(B_orig_Z, logical_in_Z, s_nodes, loss_inds)
                 succ_prob_Z[i_p,:] += succ_prob_Z_val
-                if np.sum(succ_prob_Z_val)== N_logic and np.sum(succ_prob_X_val)== N_logic:
-                    succ_prob_word[i_p] += 1
-
+                succ_prob_word_Z[i_p] += (np.sum(succ_prob_Z_val)==N_logic)
+                # if np.sum(succ_prob_Z_val)== N_logic and np.sum(succ_prob_X_val)== N_logic:
+                    # succ_prob_word[i_p] += 1
 
         succ_prob_X /= (Nrep)
         succ_prob_Z /= (Nrep)
-        succ_prob_word /= (Nrep)
+        succ_prob_word_X /= (Nrep)
+        succ_prob_word_Z /= (Nrep)
+
 
 
         toc = time.time()
@@ -126,7 +130,7 @@ for i_L, Nl in enumerate(Nl_list):
         else:
             fname = "data_48q/" + "qres_Nl_%d_i_%d.npz" % (Nl,i_rep)
             
-        np.savez(fname, succ_prob_word=succ_prob_word, succ_prob_X=succ_prob_X, succ_prob_Z=succ_prob_Z, p_list=p_list, Nrep=Nrep)
+        np.savez(fname, succ_prob_word_X=succ_prob_word_X, succ_prob_word_Z=succ_prob_word_Z, succ_prob_X=succ_prob_X, succ_prob_Z=succ_prob_Z, p_list=p_list, Nrep=Nrep)
 
         return 0
 
