@@ -134,4 +134,4 @@ for i_L, Nl in enumerate(Nl_list):
 
         return 0
 
-    results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(repeat))
+    results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(24,24+repeat))

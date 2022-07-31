@@ -135,29 +135,30 @@ def succ_prob_css_q_resolved(B_orig, logicals_in, s_nodes, loss_inds):
     for i_q, q in enumerate(loss_inds):
         ## correct logical operators
         logic_remained = np.argwhere(logic_list==1)[:,0]
-        # print(logic_remained)
-        # print(np.shape(logicals))
-        # print(logicals[logic_remained])
-        logic_removed,logic_modified, logic_op = correct_logical_q_resolved(q,logicals[logic_remained,:], Sx_mat)
-        logic_list[logic_remained[logic_removed]] = 0
-        if len(logic_modified)>0:
-            logicals[logic_remained[logic_modified],:] = np.array(logic_op)
-        ## update stabilizer group
-        ## first: update graph
-        if q in B:
-            B, s_nodes_set = modify_graph(q,B,s_nodes_set)
-        ## second: update stabilizer group matrix
-            Ns_remain = len(s_nodes_set)
-            if Ns_remain> 0:
-                q_remain = list(set(B.nodes())-s_nodes_set)
-                node_list = list(s_nodes_set) + q_remain
-                adj_mat_new = nx.to_numpy_matrix(B, nodelist = node_list)
-                Sx_red = adj_mat_new[:Ns_remain,Ns_remain:]
-                Sx_mat = np.zeros((Ns_remain,N))
-                Sx_mat[:,q_remain] = Sx_red
-            else:
-                Sx_mat = []
-                # break
+        if len(logic_remained)>0:
+            # print(logic_remained)
+            # print(np.shape(logicals))
+            # print(logicals[logic_remained])
+            logic_removed,logic_modified, logic_op = correct_logical_q_resolved(q,logicals[logic_remained,:], Sx_mat)
+            logic_list[logic_remained[logic_removed]] = 0
+            if len(logic_modified)>0:
+                logicals[logic_remained[logic_modified],:] = np.array(logic_op)
+            ## update stabilizer group
+            ## first: update graph
+            if q in B:
+                B, s_nodes_set = modify_graph(q,B,s_nodes_set)
+            ## second: update stabilizer group matrix
+                Ns_remain = len(s_nodes_set)
+                if Ns_remain> 0:
+                    q_remain = list(set(B.nodes())-s_nodes_set)
+                    node_list = list(s_nodes_set) + q_remain
+                    adj_mat_new = nx.to_numpy_matrix(B, nodelist = node_list)
+                    Sx_red = adj_mat_new[:Ns_remain,Ns_remain:]
+                    Sx_mat = np.zeros((Ns_remain,N))
+                    Sx_mat[:,q_remain] = Sx_red
+                else:
+                    Sx_mat = []
+                    # break
     
     return logic_list
 
@@ -180,18 +181,25 @@ def correct_logical_q_resolved(q,logicals_in, Sx_mat):
                 logic_removed.append(0)
 
     else:
-        for i_log in np.arange(len(logicals)-1,-1,-1):
-            if logicals[i_log][q]>0:
-                if Ns_remain> 0:
-                    st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
-                    if len(st_ind)>0:
-                        logicals[i_log] = (logicals[i_log]+Sx_mat[st_ind[0],:]) % 2
-                    else:
-                        logicals.pop(i_log)
-                        logic_removed.append(i_log)
+        # print(np.argwhere(np.array(logicals)[:,q]>0))
+        # print( len(logicals) )
+        # for i_l in range(len(logicals)):
+        #     print(logicals[i_l][q])
+        # print("------")
+        log_inds = np.argwhere(np.array(logicals)[:,q]>0)[:,0]
+        # for i_log in np.arange(len(logicals)-1,-1,-1):
+        for i_log in log_inds[::-1]:
+            # if logicals[i_log][q]>0:
+            if Ns_remain> 0:
+                st_ind = np.argwhere(Sx_mat[:,q]>0)[:,0]
+                if len(st_ind)>0:
+                    logicals[i_log] = (logicals[i_log]+Sx_mat[st_ind[0],:]) % 2
                 else:
-                    logicals.pop(i_log) 
+                    logicals.pop(i_log)
                     logic_removed.append(i_log)
+            else:
+                logicals.pop(i_log) 
+                logic_removed.append(i_log)
                     
     logic_modified = list(set(range(N_logicals))-set(logic_removed))
     return logic_removed,logic_modified, logicals
