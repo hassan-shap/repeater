@@ -23,9 +23,9 @@ import multiprocessing
 num_cores = 12#multiprocessing.cpu_count()                                     
 
 bdy = True ## boundary condition, true (obc), false(pbc)
-repeat = 24
-Nrep = 50 # number of iterations
-Nl_list = [20,15,10,30]#np.arange(2,9)
+repeat = 12
+Nrep = 1 # number of iterations
+Nl_list = [2,3,4]#np.arange(2,9)
 # p_list = np.linspace(0.01,0.4,20)
 p_list = np.linspace(0.01,0.4,20)
 
