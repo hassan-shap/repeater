@@ -19,7 +19,7 @@ num_cores = 12#multiprocessing.cpu_count()
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
 Nrep = 1000 # number of iterations
-Nl_list = np.arange(2,9)
+Nl_list = np.arange(9,30)
 p_list = np.linspace(0.01,0.4,20)
 
 # in layer stabilizer group
