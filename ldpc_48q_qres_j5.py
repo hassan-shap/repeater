@@ -16,9 +16,9 @@ import multiprocessing
 num_cores = 12#multiprocessing.cpu_count()                                     
 
 bdy = True ## boundary condition, true (obc), false(pbc)
-repeat = 24
-Nrep = 50 # number of iterations
-Nl_list = [20,15,10,30]#np.arange(2,9)
+repeat = 100
+Nrep = 100 # number of iterations
+Nl_list = np.arange(2,9)
 # p_list = np.linspace(0.01,0.4,20)
 p_list = np.linspace(0.01,0.4,20)
 
@@ -33,15 +33,16 @@ Sx_mat = H_XZ[:, 0:n]
 Sx_mat = Sx_mat[~np.all(Sx_mat == 0, axis=1)]
 Sz_mat = H_XZ[:, n:]
 Sz_mat = Sz_mat[~np.all(Sz_mat == 0, axis=1)]
-print(Sx_mat.shape,Sz_mat.shape)
-print(np.linalg.norm(Sx_mat@Sz_mat.T %2))
+print("Sx, Sz shapes:", Sx_mat.shape,Sz_mat.shape)
+print("[Sx,Sz] = ", np.linalg.norm(Sx_mat@Sz_mat.T %2))
 
 from ldpc.mod2 import rank,row_basis,inverse
 # print(row_basis(Sx_mat).shape)
 Sx_mat = row_basis(Sx_mat)
 Sz_mat = row_basis(Sz_mat)
-print(Sx_mat.shape,Sz_mat.shape)
-print(np.linalg.norm(Sx_mat@Sz_mat.T %2))
+print("Sx, Sz shapes:", Sx_mat.shape,Sz_mat.shape)
+print("[Sx,Sz] = ", np.linalg.norm(Sx_mat@Sz_mat.T %2))
+
 
 from ldpc.codes import hamming_code
 from bposd.css import css_code
@@ -62,13 +63,12 @@ print("Z weight: ", np.sum(lz,axis=1))
 temp=inverse(lx@lz.T %2)
 lx=temp@lx %2
     
-print(lx.shape,lz.shape)
+print("lx, lz shapes:", lx.shape,lz.shape)
 
-print( (lz@lx.T)% 2)
-# print(lz)
-print( np.linalg.norm((Sx_mat@Sz_mat.T) % 2))
-print( np.linalg.norm((Sz_mat@lx.T) % 2))
-print( np.linalg.norm((Sx_mat@lz.T) % 2))
+print("[lx,lz] = ", (lz@lx.T)% 2)
+print("[Sx,Sz] = ", np.linalg.norm((Sx_mat@Sz_mat.T) % 2))
+print("[Sz,lx] = ", np.linalg.norm((Sz_mat@lx.T) % 2))
+print("[Sx,lz] = ", np.linalg.norm((Sx_mat@lz.T) % 2))
 
 print("X weight: ", np.sum(lx,axis=1))
 print("Z weight: ", np.sum(lz,axis=1))
@@ -134,4 +134,4 @@ for i_L, Nl in enumerate(Nl_list):
 
         return 0
 
-    results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(repeat))
+    results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(24,24+repeat))
