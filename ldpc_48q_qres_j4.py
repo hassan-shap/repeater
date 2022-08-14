@@ -18,7 +18,7 @@ num_cores = 12#multiprocessing.cpu_count()
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
 Nrep = 50 # number of iterations
-Nl_list = [20,15,10,30] # np.arange(2,9)
+Nl_list = [30] # np.arange(2,9)
 # p_list = np.linspace(0.01,0.4,20)
 p_list = np.linspace(0.01,0.4,20)
 
@@ -134,4 +134,4 @@ for i_L, Nl in enumerate(Nl_list):
 
         return 0
 
-    results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(24,24+repeat))
+    results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(74,74+repeat))
