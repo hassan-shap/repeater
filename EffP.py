@@ -213,16 +213,19 @@ def foliated_graph(S_mat,s_nodes, Nl,bdy=True,even_odd="odd"):
 
     if even_odd == "odd":
         N = Nl*(Nq_l+Ns_l) # number of data qubits
+    else:
+        N = Nl*(Nq_l+Ns_l)+Ns_l # number of data qubits
 
-        B_orig = nx.Graph()
-        B_orig.add_nodes_from(np.arange(N))
-        B_orig.add_nodes_from(s_nodes)
-        for row in range(Ns_l):
-            qs = np.argwhere(S_mat[row,:]>0)[:,0]
-            for i_l in range(Nl):
-                B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+row), i_l*(Nq_l+Ns_l)+q) for q in qs])
+    B_orig = nx.Graph()
+    B_orig.add_nodes_from(np.arange(N))
+    B_orig.add_nodes_from(s_nodes)
+    for row in range(Ns_l):
+        qs = np.argwhere(S_mat[row,:]>0)[:,0]
+        for i_l in range(Nl):
+            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+row), i_l*(Nq_l+Ns_l)+q) for q in qs])
 
-        if bdy:
+    if bdy:
+        if even_odd == "odd":
             for i_l in range(Nl):
                 B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), i_l*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
                 if i_l> 0:
@@ -230,21 +233,9 @@ def foliated_graph(S_mat,s_nodes, Nl,bdy=True,even_odd="odd"):
         else:
             for i_l in range(Nl):
                 B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), i_l*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
-                B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), ((i_l-1)%Nl)*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
-                
-    else:
-        N = Nl*(Nq_l+Ns_l)+Ns_l # number of data qubits
-
-        B_orig = nx.Graph()
-        B_orig.add_nodes_from(np.arange(N))
-        B_orig.add_nodes_from(s_nodes)
-        for row in range(Ns_l):
-            qs = np.argwhere(S_mat[row,:]>0)[:,0]
-            for i_l in range(Nl):
-                B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+row+Ns_l), i_l*(Nq_l+Ns_l)+q+Ns_l) for q in qs])
-
-        for i_l in range(Nl):
-            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), i_l*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
-            B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), (i_l-1)*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
-
+                if i_l> 0:
+                    B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), (i_l-1)*(Nq_l+Ns_l)+Nq_l+sq) for sq in range(Ns_l)])
+                else:
+                    B_orig.add_edges_from([("s%d" % ((i_l*Ns_l)+sq), Nl*(Nq_l+Ns_l)+sq) for sq in range(Ns_l)])
+                    
     return B_orig
