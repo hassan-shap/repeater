@@ -19,7 +19,7 @@ num_cores = 12#multiprocessing.cpu_count()
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
 Nrep = 200 # number of iterations
-Nl_list = np.arange(2,13)
+Nl_list = np.arange(2,9)
 p_list = [0.05,0.1]
 
 # in layer stabilizer group
@@ -45,9 +45,10 @@ for i_L, Nl in enumerate(Nl_list):
         tic = time.time()
 
         succ_prob_7_ml = np.zeros(len(p_list))
-        for i_p, p in enumerate(p_list):
+        for i_p, p_r in enumerate(p_list):
+            p_stab = 1-(1-p_r)**0.5
             for i_r in range(Nrep):
-                loss_inds = np.random.permutation(np.argwhere(np.random.rand(N)<p)[:,0])
+                loss_inds = np.random.permutation(np.argwhere(np.random.rand(N)<p_stab)[:,0])
                 succ_prob_7_ml[i_p] += succ_prob_css_calc(B_orig, logical, s_nodes, loss_inds)
 
         succ_prob_7_ml /= Nrep

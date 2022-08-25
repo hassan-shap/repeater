@@ -19,9 +19,9 @@ num_cores = 12#multiprocessing.cpu_count()
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
 Nrep = 200 # number of iterations
-Nl_list = np.arange(8,13)
+Nl_list = np.arange(1,8)
 p_list = np.linspace(0.01,0.75,20)
-p_stab_list = [0.1]
+p_r_list = [0.1,0.05]
 
 # in layer stabilizer group
 Sx_mat = np.array([[1,1,1,1,0,0,0],\
@@ -30,7 +30,8 @@ Sx_mat = np.array([[1,1,1,1,0,0,0],\
 Nq_l = np.size(Sx_mat,1) # number of data qubits per layer
 Ns_l = np.size(Sx_mat,0) # number of stabilizers per layer
 
-for p_stab in p_stab_list:
+for p_r in p_r_list:
+    p_stab = 1-(1-p_r)**0.5
     for i_L, Nl in enumerate(Nl_list):
         print("L= %d" % (Nl))
 
@@ -49,10 +50,10 @@ for p_stab in p_stab_list:
 
             succ_prob_7_ml = np.zeros(len(p_list))
             for i_p, p in enumerate(p_list):
-                p_data = 1- (1-p)*(1-p_stab)
+                # p_data = 1- (1-p)*(1-p_stab)
                 for i_r in range(Nrep):
                     # loss_inds = np.random.permutation(np.argwhere(np.random.rand(N)<p)[:,0])
-                    loss_inds_data = np.random.permutation(np.where(np.random.rand(N)<p_data*logical)[1])
+                    loss_inds_data = np.random.permutation(np.where(np.random.rand(N)<p*logical)[1])
                     loss_inds_ancilla = np.random.permutation(np.where(np.random.rand(N)<p_stab*ancilla)[1])
                     loss_inds = np.concatenate((loss_inds_data,loss_inds_ancilla))
 
@@ -61,12 +62,12 @@ for p_stab in p_stab_list:
             succ_prob_7_ml /= Nrep
 
             toc = time.time()
-            print("finished p_s= %.2f, L = %d, r=%d in %.1f secs" % (p_stab,Nl,i_rep,toc-tic))
+            print("finished p_s= %.2f, L = %d, r=%d in %.1f secs" % (p_r,Nl,i_rep,toc-tic))
 
             if bdy:
-                fname = "data_7q/" + "odd_p_%.2f_Nl_%d_i_%d.npz" % (p_stab,Nl,i_rep)
+                fname = "data_7q/" + "odd_p_%.2f_Nl_%d_i_%d.npz" % (p_r,Nl,i_rep)
             else:
-                fname = "data_7q/" + "Nl_p_%.2f_%d_i_%d.npz" % (p_stab,Nl,i_rep)
+                fname = "data_7q/" + "Nl_p_%.2f_%d_i_%d.npz" % (p_r,Nl,i_rep)
 
             np.savez(fname, succ_prob=succ_prob_7_ml, p_list=p_list, Nrep=Nrep)
 
