@@ -118,7 +118,7 @@ for p_r in p_r_list:
             succ_prob_word_X /= (Nrep)
 
             toc = time.time()
-            print("finished L = %d, r=%d in %.1f secs" % (Nl,i_rep,toc-tic))
+            print("finished p_r= %.2f, L = %d, r=%d in %.1f secs" % (p_r,Nl,i_rep,toc-tic))
 
             if bdy:
                 fname = "data_48q/" + "odd_p_%.2f_Nl_%d_i_%d.npz" % (p_r,Nl,i_rep)
