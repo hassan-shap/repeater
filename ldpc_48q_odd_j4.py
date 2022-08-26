@@ -22,7 +22,7 @@ Nl_list = np.arange(1,9)
 # p_list = np.linspace(0.01,0.4,20)
 # p_list = np.linspace(0.01,0.4,20)
 p_list = np.linspace(0.01,0.75,20)
-p_r_list = [0.1,0.05]
+p_r_list = [0.2,0.15]
 
 ######## define quantum code here ########
 l=24
