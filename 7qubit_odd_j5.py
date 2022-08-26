@@ -18,8 +18,8 @@ num_cores = 12#multiprocessing.cpu_count()
 
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
-Nrep = 200 # number of iterations
-Nl_list = np.arange(1,8)
+Nrep = 1000 # number of iterations
+Nl_list = np.arange(2,31,2)
 p_list = np.linspace(0.01,0.75,20)
 p_r_list = [0.1,0.05]
 
@@ -62,7 +62,7 @@ for p_r in p_r_list:
             succ_prob_7_ml /= Nrep
 
             toc = time.time()
-            print("finished p_s= %.2f, L = %d, r=%d in %.1f secs" % (p_r,Nl,i_rep,toc-tic))
+            print("finished p_r= %.2f, L = %d, r=%d in %.1f secs" % (p_r,Nl,i_rep,toc-tic))
 
             if bdy:
                 fname = "data_7q/" + "odd_p_%.2f_Nl_%d_i_%d.npz" % (p_r,Nl,i_rep)
