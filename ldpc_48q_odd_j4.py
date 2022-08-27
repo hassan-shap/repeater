@@ -17,8 +17,8 @@ num_cores = 12#multiprocessing.cpu_count()
 
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
-Nrep = 100 # number of iterations
-Nl_list = np.arange(1,9)
+Nrep = 50 # number of iterations
+Nl_list = [12,16,20,24,28] #np.arange(1,9)
 # p_list = np.linspace(0.01,0.4,20)
 # p_list = np.linspace(0.01,0.4,20)
 p_list = np.linspace(0.01,0.75,20)
