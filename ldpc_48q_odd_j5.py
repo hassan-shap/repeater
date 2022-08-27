@@ -17,7 +17,7 @@ num_cores = 12#multiprocessing.cpu_count()
 
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
-Nrep = 1000 # number of iterations
+Nrep = 10000 # number of iterations
 Nl_list = np.arange(1,2)
 # p_list = np.linspace(0.01,0.75,20)
 p_list = np.linspace(0.001,0.3,20)
@@ -120,7 +120,7 @@ for p_r in p_r_list:
             print("finished p_r= %.2f, L = %d, r=%d in %.1f secs" % (p_r,Nl,i_rep,toc-tic))
 
             if bdy:
-                fname = "data_48q/" + "odd_p_%.2f_Nl_%d_i_%d.npz" % (p_r,Nl,i_rep)
+                fname = "data_fig2/48q/" + "odd_p_%.2f_Nl_%d_i_%d.npz" % (p_r,Nl,i_rep)
             else:
                 assert 0
 
@@ -128,4 +128,4 @@ for p_r in p_r_list:
 
             return 0
 
-        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(repeat))
+        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(200,200+repeat))

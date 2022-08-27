@@ -18,10 +18,11 @@ num_cores = 12#multiprocessing.cpu_count()
 
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
-Nrep = 1000 # number of iterations
-Nl_list = np.arange(2,31,2)
-p_list = np.linspace(0.01,0.75,20)
-p_r_list = [0.1,0.05]
+Nrep = 10000 # number of iterations
+Nl_list = np.arange(1,2,2)
+# p_list = np.linspace(0.01,0.75,20)
+p_list = np.linspace(0.001,0.3,20)
+p_r_list = [0.1]
 
 # in layer stabilizer group
 Sx_mat = np.array([[1,1,1,1,0,0,0],\
