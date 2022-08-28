@@ -21,7 +21,7 @@ Nrep = 10000 # number of iterations
 Nl_list = np.arange(1,2)
 # p_list = np.linspace(0.01,0.75,20)
 p_list = np.linspace(0.001,0.3,20)
-p_r_list = [0,0.1]
+p_r_list = [0]
 
 ######## define quantum code here ########
 L = 6
@@ -92,4 +92,4 @@ for p_r in p_r_list:
 
             return 0
 
-        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(100,100+repeat))
+        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(200,200+repeat))
