@@ -92,4 +92,4 @@ for p_r in p_r_list:
 
             return 0
 
-        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(repeat))
+        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(100,100+repeat))
