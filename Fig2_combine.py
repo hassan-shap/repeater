@@ -118,12 +118,14 @@ for i_p,p_r in enumerate(p_r_list):
 marker_list = [".","v"]
 for i_p,p_r in enumerate(p_r_list):
     f2 = "data_fig2/48q/" + "odd_p_%.2f_Nl_%d" % (p_r,Nl)
-    succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,6,repeat,"odd") 
-    plt.errorbar(p_list[Si:],(1-np.mean(succ_prob_odd,axis=1))[Si:],yerr = np.sqrt(p_list[Si:]*(1-p_list[Si:])/Ntot), capsize=3,color="C1")
+    succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,6,repeat,"odd")
+    p_fail = (1-np.mean(succ_prob_odd,axis=1))[Si:]
+    plt.errorbar(p_list[Si:],p_fail,yerr = np.sqrt(p_fail*(1-p_fail)/Ntot), capsize=3,color="C1")
 
     f2 = "data_toric/" +  "odd_L_%d_p_%.2f_Nl_%d" % (L,p_r,Nl)
-    succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,2,repeat,"odd") 
-    plt.errorbar(p_list[Si:],(1-np.mean(succ_prob_odd,axis=1))[Si:],yerr = np.sqrt(p_list[Si:]*(1-p_list[Si:])/Ntot), capsize=3,color="C2")
+    succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,2,repeat,"odd")
+    p_fail = (1-np.mean(succ_prob_odd,axis=1))[Si:]
+    plt.errorbar(p_list[Si:],p_fail,yerr = np.sqrt(p_fail*(1-p_fail)/Ntot), capsize=3,color="C2")
 
 ### p_r = 0.1 part:
 #plt.figure(1,figsize=(6,4))
@@ -140,7 +142,7 @@ repeat = 300
 marker_list = [".","v"]
 for i_p,p_r in enumerate(p_r_list):
     f2 = "data_fig2/48q/" + "odd_p_%.2f_Nl_%d" % (p_r,Nl)
-    succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,6,repeat,"odd") 
+    succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,6,repeat,"odd")
     plt.plot(p_list[Si:],(1-np.mean(succ_prob_odd,axis=1))[Si:],marker=marker_list[i_p], color="C1",markerfacecolor='none',markersize=8)
 
     f2 = "data_toric/" +  "odd_L_%d_p_%.2f_Nl_%d" % (L,p_r,Nl)
@@ -149,8 +151,9 @@ for i_p,p_r in enumerate(p_r_list):
 
 ### p_r = 0.1  errorbar
 f2 = "data_fig2/7q/" + "odd_p_%.2f_Nl_%d" % (p_r,Nl)
-succ_prob_odd, p_list, Ntot = file_reader(f2,repeat) 
-plt.errorbar(p_list,1-succ_prob_odd,yerr = np.sqrt(p_list*(1-p_list)/Ntot), capsize=3, color="C0",label="[[7,1,3]]")
+succ_prob_odd, p_list, Ntot = file_reader(f2,repeat)
+p_fail = 1-succ_prob_odd
+plt.errorbar(p_list,p_fail,yerr = np.sqrt(p_fail*(1-p_fail)/Ntot), capsize=3, color="C0",label="[[7,1,3]]")
 
 p_r_list = [0.1]
 repeat = 300
@@ -158,11 +161,13 @@ marker_list = [".","v"]
 for i_p,p_r in enumerate(p_r_list):
     f2 = "data_fig2/48q/" + "odd_p_%.2f_Nl_%d" % (p_r,Nl)
     succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,6,repeat,"odd") 
-    plt.errorbar(p_list[Si:],(1-np.mean(succ_prob_odd,axis=1))[Si:],yerr = np.sqrt(p_list[Si:]*(1-p_list[Si:])/Ntot), capsize=3,color="C1",label=r"[[48,6,8]]")
+    p_fail = (1-np.mean(succ_prob_odd,axis=1))[Si:]
+    plt.errorbar(p_list[Si:],p_fail,yerr = np.sqrt(p_fail*(1-p_fail)/Ntot), capsize=3,color="C1",label=r"[[48,6,8]]")
 
     f2 = "data_toric/" +  "odd_L_%d_p_%.2f_Nl_%d" % (L,p_r,Nl)
-    succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,2,repeat,"odd") 
-    plt.errorbar(p_list[Si:],(1-np.mean(succ_prob_odd,axis=1))[Si:],yerr = np.sqrt(p_list[Si:]*(1-p_list[Si:])/Ntot), capsize=3,color="C2",label=r"6x6 Toric")
+    succ_prob_odd, _, p_list, Ntot = file_reader_ldpc(f2,2,repeat,"odd")
+    p_fail = (1-np.mean(succ_prob_odd,axis=1))[Si:]
+    plt.errorbar(p_list[Si:],p_fail,yerr = np.sqrt(p_fail*(1-p_fail)/Ntot), capsize=3,color="C2",label=r"6x6 Toric")
 
 x_list = np.linspace(0.,0.3,1000)
 plt.plot(x_list,x_list,"k--",linewidth=1,label='direct transmission')
