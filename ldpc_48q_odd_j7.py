@@ -22,7 +22,7 @@ Nrep = 50 # number of iterations
 Nl_list = np.arange(12,30,4)
 # p_list = np.linspace(0.01,0.4,20)
 p_list = np.linspace(0.1,0.55,20)
-p_r_list = [0.2,0.15]
+p_r_list = [0.15]
 
 ######## define quantum code here ########
 l=24
