@@ -18,11 +18,11 @@ num_cores = 12#multiprocessing.cpu_count()
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
 Nrep = 50 # number of iterations
-# Nl_list = np.arange(2,9) #[12,16,20,24,28] 
-Nl_list = np.arange(12,30,4)
+Nl_list = np.arange(2,9) #[12,16,20,24,28] 
+# Nl_list = np.arange(12,30,4)
 # p_list = np.linspace(0.01,0.4,20)
 p_list = np.linspace(0.1,0.55,20)
-p_r_list = [0.15]
+p_r_list = [0.05,0.1,0.15]
 
 ######## define quantum code here ########
 l=24
