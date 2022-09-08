@@ -17,12 +17,12 @@ num_cores = 12#multiprocessing.cpu_count()
 
 
 bdy = True ## boundary condition, true (obc), false(pbc)
-repeat = 100
-Nrep = 10000 # number of iterations
-Nl_list = np.arange(1,2,2)
-# p_list = np.linspace(0.01,0.75,20)
-p_list = np.linspace(0.001,0.3,20)
-p_r_list = [0.1]
+repeat = 200
+Nrep = 1000 # number of iterations
+Nl_list = np.arange(2,31,2)
+p_list = np.linspace(0.01,0.75,20)
+# p_list = np.linspace(0.001,0.3,20)
+p_r_list = [0.1,0.05]
 
 # in layer stabilizer group
 Sx_mat = np.array([[1,1,1,1,0,0,0],\
@@ -51,14 +51,17 @@ for p_r in p_r_list:
 
             succ_prob_7_ml = np.zeros(len(p_list))
             for i_p, p in enumerate(p_list):
-                # p_data = 1- (1-p)*(1-p_stab)
-                for i_r in range(Nrep):
-                    # loss_inds = np.random.permutation(np.argwhere(np.random.rand(N)<p)[:,0])
-                    loss_inds_data = np.random.permutation(np.where(np.random.rand(N)<p*logical)[1])
-                    loss_inds_ancilla = np.random.permutation(np.where(np.random.rand(N)<p_stab*ancilla)[1])
-                    loss_inds = np.concatenate((loss_inds_data,loss_inds_ancilla))
+                ###################
+                ################### change to sample over large probs only
+                if 10<i_p<15:
+                    # p_data = 1- (1-p)*(1-p_stab)
+                    for i_r in range(Nrep):
+                        # loss_inds = np.random.permutation(np.argwhere(np.random.rand(N)<p)[:,0])
+                        loss_inds_data = np.random.permutation(np.where(np.random.rand(N)<p*logical)[1])
+                        loss_inds_ancilla = np.random.permutation(np.where(np.random.rand(N)<p_stab*ancilla)[1])
+                        loss_inds = np.concatenate((loss_inds_data,loss_inds_ancilla))
 
-                    succ_prob_7_ml[i_p] += succ_prob_css_calc(B_orig, logical, s_nodes, loss_inds)
+                        succ_prob_7_ml[i_p] += succ_prob_css_calc(B_orig, logical, s_nodes, loss_inds)
 
             succ_prob_7_ml /= Nrep
 
@@ -74,5 +77,5 @@ for p_r in p_r_list:
 
             return 0
 
-        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(repeat))
+        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(100,100+repeat))
 
