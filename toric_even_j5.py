@@ -19,7 +19,7 @@ bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
 Nrep = 100 # number of iterations
 Nl_list = np.arange(1,2)
-p_list = [0.05,0.1,0.15,0.2]
+p_list = [0.1]#[0.05,0.1,0.15,0.2]
 
 ######## define quantum code here ########
 L = 6
