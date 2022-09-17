@@ -20,7 +20,8 @@ repeat = 100
 Nrep = 10000 # number of iterations
 Nl_list = np.arange(1,2)
 # p_list = np.linspace(0.01,0.75,20)
-p_list = np.linspace(0.001,0.3,20)
+# p_list = np.linspace(0.001,0.3,20)
+p_list = np.arange(0.3,0.55,0.05/3)+0.05/3 # Fig.2 -2
 p_r_list = [0,0.1]
 
 ######## define quantum code here ########
@@ -84,7 +85,7 @@ for p_r in p_r_list:
             print("finished p_r= %.2f, Nl = %d, r=%d in %.1f secs" % (p_r,Nl,i_rep,toc-tic))
 
             if bdy:
-                fname = "data_toric/" + "odd_L_%d_p_%.2f_Nl_%d_i_%d.npz" % (L,p_r,Nl,i_rep)
+                fname = "data_toric/" + "odd_L_%d_p_%.2f_Nl_%d_i_%d_2.npz" % (L,p_r,Nl,i_rep)
             else:
                 assert 0
 
