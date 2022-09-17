@@ -18,11 +18,12 @@ num_cores = 12#multiprocessing.cpu_count()
 
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 200
-Nrep = 1000 # number of iterations
-Nl_list = np.arange(2,31,2)
-p_list = np.linspace(0.01,0.75,20)
+Nrep = 100000 # number of iterations
+Nl_list = np.arange(1,2,2)
+p_list = np.arange(0.3,0.55,0.05/3)+0.05/3 # Fig.2 -2
+# p_list = np.linspace(0.01,0.75,20)
 # p_list = np.linspace(0.001,0.3,20)
-p_r_list = [0.1,0.05]
+p_r_list = [0.1]
 
 # in layer stabilizer group
 Sx_mat = np.array([[1,1,1,1,0,0,0],\
@@ -69,7 +70,8 @@ for p_r in p_r_list:
             print("finished p_r= %.2f, L = %d, r=%d in %.1f secs" % (p_r,Nl,i_rep,toc-tic))
 
             if bdy:
-                fname = "data_7q/" + "odd_p_%.2f_Nl_%d_i_%d.npz" % (p_r,Nl,i_rep)
+                fname = "data_fig2/7q/" + "odd_p_%.2f_Nl_%d_i_%d_2.npz" % (p_r,Nl,i_rep)
+                # fname = "data_7q/" + "odd_p_%.2f_Nl_%d_i_%d.npz" % (p_r,Nl,i_rep)
             else:
                 fname = "data_7q/" + "Nl_p_%.2f_%d_i_%d.npz" % (p_r,Nl,i_rep)
 
