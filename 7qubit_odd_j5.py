@@ -17,8 +17,8 @@ num_cores = 12#multiprocessing.cpu_count()
 
 
 bdy = True ## boundary condition, true (obc), false(pbc)
-repeat = 200
-Nrep = 100000 # number of iterations
+repeat = 100
+Nrep = 10000 # number of iterations
 Nl_list = np.arange(1,2,2)
 p_list = np.arange(0.3,0.55,0.05/3)+0.05/3 # Fig.2 -2
 # p_list = np.linspace(0.01,0.75,20)
@@ -54,15 +54,15 @@ for p_r in p_r_list:
             for i_p, p in enumerate(p_list):
                 ###################
                 ################### change to sample over large probs only
-                if 10<i_p<15:
+                # if 10<i_p<15:
                     # p_data = 1- (1-p)*(1-p_stab)
-                    for i_r in range(Nrep):
-                        # loss_inds = np.random.permutation(np.argwhere(np.random.rand(N)<p)[:,0])
-                        loss_inds_data = np.random.permutation(np.where(np.random.rand(N)<p*logical)[1])
-                        loss_inds_ancilla = np.random.permutation(np.where(np.random.rand(N)<p_stab*ancilla)[1])
-                        loss_inds = np.concatenate((loss_inds_data,loss_inds_ancilla))
+                for i_r in range(Nrep):
+                    # loss_inds = np.random.permutation(np.argwhere(np.random.rand(N)<p)[:,0])
+                    loss_inds_data = np.random.permutation(np.where(np.random.rand(N)<p*logical)[1])
+                    loss_inds_ancilla = np.random.permutation(np.where(np.random.rand(N)<p_stab*ancilla)[1])
+                    loss_inds = np.concatenate((loss_inds_data,loss_inds_ancilla))
 
-                        succ_prob_7_ml[i_p] += succ_prob_css_calc(B_orig, logical, s_nodes, loss_inds)
+                    succ_prob_7_ml[i_p] += succ_prob_css_calc(B_orig, logical, s_nodes, loss_inds)
 
             succ_prob_7_ml /= Nrep
 
