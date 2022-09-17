@@ -79,5 +79,5 @@ for p_r in p_r_list:
 
             return 0
 
-        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(300,300+repeat))
+        results = Parallel(n_jobs=num_cores)(delayed(runner)(i_rep) for i_rep in range(repeat))
 
