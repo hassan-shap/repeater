@@ -17,9 +17,11 @@ num_cores = 12#multiprocessing.cpu_count()
 
 bdy = True ## boundary condition, true (obc), false(pbc)
 repeat = 100
-Nrep = 4 # number of iterations
-Nl_list = np.arange(12,30,4)
-p_list = [0.05,0.1,0.15]
+Nrep = 100 # number of iterations
+# Nl_list = np.arange(12,30,4)
+# p_list = [0.05,0.1,0.15]
+Nl_list = np.arange(1,2,4)
+p_list = [0.1]
 
 ######## define quantum code here ########
 l=24
@@ -113,7 +115,8 @@ for i_L, Nl in enumerate(Nl_list):
         print("finished L = %d, r=%d in %.1f secs" % (Nl,i_rep,toc-tic))
 
         if bdy:
-            fname = "data_48q/" + "even_Nl_%d_i_%d.npz" % (Nl,i_rep)
+            fname = "data_fig2/48q/" + "even_Nl_%d_i_%d.npz" % (Nl,i_rep)
+            # fname = "data_48q/" + "even_Nl_%d_i_%d.npz" % (Nl,i_rep)
         else:
             assert 0    
         np.savez(fname,  succ_prob_word_Z=succ_prob_word_Z, succ_prob_Z=succ_prob_Z, p_list=p_list, Nrep=Nrep)
