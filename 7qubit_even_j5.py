@@ -17,10 +17,10 @@ num_cores = 12#multiprocessing.cpu_count()
 
 
 bdy = True ## boundary condition, true (obc), false(pbc)
-repeat = 100
-Nrep = 1000 # number of iterations
-Nl_list = np.arange(2,31,2)
-p_list = [0.05,0.1]
+repeat = 10
+Nrep = 10000 # number of iterations
+Nl_list = np.arange(1,2,2)
+p_list = [0.1]
 
 # in layer stabilizer group
 Sx_mat = np.array([[1,1,1,1,0,0,0],\
@@ -57,7 +57,8 @@ for i_L, Nl in enumerate(Nl_list):
         print("finished L = %d, r=%d in %.1f secs" % (Nl,i_rep,toc-tic))
 
         if bdy:
-            fname = "data_7q/" + "even_Nl_%d_i_%d.npz" % (Nl,i_rep)
+            fname = "data_fig2/7q/" + "even_Nl_%d_i_%d.npz" % (Nl,i_rep)
+            # fname = "data_7q/" + "even_Nl_%d_i_%d.npz" % (Nl,i_rep)
         else:
             assert 0
 
